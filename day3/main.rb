@@ -1001,4 +1001,4 @@ input = "101001100010
 110001101111
 010100000111"
 
-p power(input)
+p life_support(input)[:total_rate]

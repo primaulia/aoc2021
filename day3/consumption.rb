@@ -9,7 +9,7 @@ def process(input)
   binaries_arr
 end
 
-def calculate_rate(input)
+def calculate_power(input)
   processed_input = process(input)
   transposed_arr = processed_input.transpose
 
@@ -27,7 +27,7 @@ def calculate_rate(input)
   end
 end
 
-def calculator(measurements, opts = {
+def calculate_life(measurements, opts = {
   index: 0,
   criteria: 'oxygen'
 })
@@ -51,17 +51,16 @@ def calculator(measurements, opts = {
     measurement[index] == criteria_num
   end
   
-  calculator(measurements, index: index + 1, criteria: criteria)
+  calculate_life(measurements, index: index + 1, criteria: criteria)
 end
 
-
 def gamma(input)
-  rates = calculate_rate(input)
+  rates = calculate_power(input)
   rates[:gamma].to_i(2)
 end
 
 def epsilon(input)
-  rates = calculate_rate(input)
+  rates = calculate_power(input)
   rates[:epsilon].to_i(2)
 end
 
@@ -72,8 +71,8 @@ end
 def life_support(input)
   measurements = process(input)
   results = {}
-  results[:oxygen] = calculator(measurements).to_i(2)
-  results[:carbon] = calculator(measurements, index: 0, criteria: 'carbon').to_i(2)
+  results[:oxygen] = calculate_life(measurements).to_i(2)
+  results[:carbon] = calculate_life(measurements, index: 0, criteria: 'carbon').to_i(2)
   results[:total_rate] = results[:oxygen] * results[:carbon]
   results
 end

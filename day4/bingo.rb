@@ -6,7 +6,7 @@ def split_map_to_int(arr, splitter)
   arr.split(splitter).map(&:to_i)
 end
 
-def bingo_check(sequence,boards)
+def bingo_win_first(sequence,boards)
   sequence_arr = split_map_to_int(sequence, ',')
   boards_arr = split_map_to_int(boards, "\s").each_slice(25).to_a
   matrix_width = 5
@@ -20,6 +20,27 @@ def bingo_check(sequence,boards)
     board_index += 1
     matrix_width += 1 if board_index % boards_arr.length == 0
     
+    current_sequence = sequence_arr[0..matrix_width]
+    current_board = boards_arr[board_index % boards_arr.length]
+  end
+
+  score(current_sequence, current_board)
+end
+
+def bingo_win_last(sequence,boards)
+  sequence_arr = split_map_to_int(sequence, ',')
+  boards_arr = split_map_to_int(boards, "\s").each_slice(25).to_a
+  matrix_width = 5
+  board_index = 0
+
+  current_sequence = sequence_arr[0...matrix_width]
+  current_board = boards_arr[board_index]
+
+  until boards_arr.length == 1
+    boards_arr.delete_at(board_index % boards_arr.length) if bingo?(current_sequence, current_board)
+    
+    matrix_width += 1 if board_index % boards_arr.length == 0
+    board_index += 1
     current_sequence = sequence_arr[0..matrix_width]
     current_board = boards_arr[board_index % boards_arr.length]
   end

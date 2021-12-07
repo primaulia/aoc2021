@@ -25,18 +25,22 @@ describe '#bingo_check' do
     2  0 12  3  7"
   }
 
-  xit 'should return the final score with given sequence and boards' do
+  it 'should return the final score with given sequence and boards' do
     expect(bingo_check(sequence, boards)).to eql(4512)
   end  
 end
 
 describe '#bingo?' do
   let(:sequence_set) {
-    [7,4,9,5,11,17,23,2,0,14,21,24].to_set
+    [7,4,9,5,11,17,23,2,0,14,21,24]
   }
 
   let(:set) {
-    [14, 21, 17, 24, 4].to_set
+    [14, 21, 17, 24, 4,
+     10, 16, 15,  9, 19,
+     18,  8, 23, 26, 20,
+     22, 11, 13,  6,  5,
+     2,  0,  12,  3,  7]
   }
 
   it 'should returns true if the set is a subset of the sequence' do
@@ -44,7 +48,24 @@ describe '#bingo?' do
   end
 
   it 'should returns false if otherwise' do
-    expect(bingo?([7,4,9,5,11,17,23,2,0,14,21].to_set, set)).to be_falsy
+    expect(bingo?([7,4,9,5,11,17,23,2,0,14,21], set)).to be_falsy
+  end
+
+  it "should returns false if it's not in a sequential row" do
+    expect(bingo?(sequence_set, [14, 21, 17, 8, 4,
+      10, 16, 15,  24, 19,
+      18,  8, 23, 26, 20,
+      22, 11, 13,  6,  5,
+      2,  0,  12,  3,  7])).to be_falsy
+  end
+
+  it "should returns true if it's in a sequential column" do
+    expect(bingo?(sequence_set, [
+      14, 2, 1, 24, 8, 
+      21, 2, 3, 4, 1,
+      17, 1, 1, 1, 1,
+      24, 1, 2, 2, 2,
+      4, 1, 1, 1, 1])).to be_truthy
   end
 end
 
@@ -63,7 +84,7 @@ describe '#score' do
     ]
   }
 
-  it 'should returns total number aside from the winning set' do
-    expect(score(winning_set, board)).to eq(188)
+  it 'should returns total number aside from the winning set times the last number on the sequence' do
+    expect(score(winning_set, board)).to eq(4512)
   end
 end

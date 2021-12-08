@@ -1,6 +1,6 @@
 require_relative '../bingo'
 
-xdescribe '#bingo' do
+describe '#bingo' do
   let(:sequence) { 
     "7,4,9,5,11,17,23,2,0,14,21,24,10,16,13,6,15,25,12,22,18,20,8,19,3,26,1" 
   }
@@ -25,12 +25,33 @@ xdescribe '#bingo' do
     2  0 12  3  7"
   }
 
-  it 'should return the final score with given sequence and boards if you won first' do
-    expect(bingo(sequence, boards)).to eql(4512)
+  let(:first_board) {
+    [
+      14,21,17,24, 4,
+      10,16,15, 9, 19,
+      18, 8, 23, 26, 20,
+      22, 11, 13, 6, 5,
+      2, 0, 12, 3, 7
+    ]
+  }
+
+  let(:last_board) {
+    [
+      3, 15,  0,  2, 22,
+      9, 18, 13, 17,  5,
+     19,  8,  7, 25, 23,
+     20, 11, 10, 24,  4,
+     14, 21, 16, 12,  6,
+    ]
+  }
+
+  it 'should return the board first and the last board to win' do
+    expect(bingo(sequence, boards).first[:board]).to eql(first_board)
+    expect(bingo(sequence, boards).last[:board]).to eql(last_board)
   end  
 end
 
-describe '#bingo?' do
+describe '#check?' do
   let(:sequence_set) {
     [7,4,9,5,11,17,23,2,0,14,21,24]
   }
@@ -44,15 +65,15 @@ describe '#bingo?' do
   }
 
   it 'should returns true if the set is a subset of the sequence' do
-    expect(bingo?(sequence_set, set)).to be_truthy
+    expect(check?(sequence_set, set)).to be_truthy
   end
 
   it 'should returns false if otherwise' do
-    expect(bingo?([7,4,9,5,11,17,23,2,0,14,21], set)).to be_falsy
+    expect(check?([7,4,9,5,11,17,23,2,0,14,21], set)).to be_falsy
   end
 
   it "should returns false if it's not in a sequential row" do
-    expect(bingo?(sequence_set, [14, 21, 17, 8, 4,
+    expect(check?(sequence_set, [14, 21, 17, 8, 4,
       10, 16, 15,  24, 19,
       18,  8, 23, 26, 20,
       22, 11, 13,  6,  5,
@@ -60,7 +81,7 @@ describe '#bingo?' do
   end
 
   it "should returns true if it's in a sequential column" do
-    expect(bingo?(sequence_set, [
+    expect(check?(sequence_set, [
       14, 2, 1, 24, 8, 
       21, 2, 3, 4, 1,
       17, 1, 1, 1, 1,

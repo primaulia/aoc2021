@@ -602,5 +602,5 @@ boards = "26 68  3 95 59
 29  8 85 69 56
 40 80 47 12 17"
 
-p bingo_win_first(sequences, boards)
-p bingo_win_last(sequences, boards)
+p bingo(sequences, boards).first[:score]
+p bingo(sequences, boards).last[:score]

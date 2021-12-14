@@ -15,16 +15,15 @@ def process(input)
 end
 
 def filter_lines(array)
-  array.select do |coordinates|
-    xes = coordinates[:x]
-    yes = coordinates[:y]
-
-    xes.first == xes.last || yes.first == yes.last
+  filtered_arr = array.select do |coordinate|
+    horizontal?(coordinate) || vertical?(coordinate) || diagonal?(coordinate)
   end
+
+  filtered_arr
 end
 
 def count_overlaps(coordinates)
-  max_size = calc_area(coordinates) + 1
+  max_size = calc_area(coordinates)
   map = Array.new(max_size) { |i| Array.new(max_size) { |i| 0 } }
   filled_maps = fill_cells(coordinates, map)
   filled_maps.reduce(0) do |accu, row|
@@ -33,22 +32,25 @@ def count_overlaps(coordinates)
 end
 
 def calc_area(coordinates)
-  coordinates.reduce(0) do |current_size, hash|
+  area = coordinates.reduce(0) do |current_size, hash|
     max_in_pair = [hash[:x].max, hash[:y].max].max
     [current_size, max_in_pair].max
   end
+  area + 1
 end
 
 def fill_cells(coordinates_arr, array)
-  # pp coordinates_arr
   coordinates_arr.each do |coordinate|
-    # binding.pry if coordinate[:x] == [9, 3]
-    array = horizontal?(coordinate) ? fill_row(coordinate, array) : fill_column(coordinate, array)
+    if diagonal?(coordinate)
+      array = fill_diagonal(coordinate, array)
+    elsif horizontal?(coordinate)
+      array = fill_row(coordinate, array) 
+    else
+      array = fill_column(coordinate, array)
+    end
   end
-
-  # pp array
-  puts
-  array
+  
+  array 
 end
 
 def fill_row(coordinate, array)
@@ -74,12 +76,42 @@ def fill_column(coordinate, array)
   end
 end
 
+def fill_diagonal(coordinate, array)
+  x1, x2 = coordinate[:x]
+  y1, y2 = coordinate[:y]
+  
+  original = [x1, y1]
+  current = [x1, y1]
+  destination = [x2, y2]
+  
+  until current == destination
+    current_x, current_y = current
+    destination_x, destination_y = destination
+
+    array[current_x][current_y] += 1
+
+    next_x = current_x < destination_x ? current_x + 1 : current_x - 1
+    next_y = current_y < destination_y ? current_y + 1 : current_y - 1
+
+    current = [next_x, next_y]
+  end
+
+  array[x2][y2] += 1
+  array  
+end
+
 def horizontal?(coordinate)
   coordinate[:y].first == coordinate[:y].last
 end
 
 def vertical?(coordinate)
-  !horizontal?
+  coordinate[:x].first == coordinate[:x].last
+end
+
+def diagonal?(coordinate)  
+  x1, x2 = coordinate[:x]
+  y1, y2 = coordinate[:y].minmax
+  (x1 - x2).abs == (y1 - y2).abs
 end
 
 def vents(input)
